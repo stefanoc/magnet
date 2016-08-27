@@ -1,0 +1,2 @@
+[workspace]
+members = ["magnet-core", "magnet-more", "magnet-app", "magnet-example"]

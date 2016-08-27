@@ -1,0 +1,18 @@
+[package]
+name = "magnet_app"
+version = "0.1.0"
+authors = ["Stefano Cobianchi <stefano.cobianchi@me.com>"]
+
+[dependencies]
+hyper = "*"
+regex = "*"
+diesel = "*"
+persistent = "*"
+r2d2 = "*"
+r2d2-diesel = "*"
+
+[dependencies.magnet_core]
+path = "../magnet-core"
+
+[dependencies.magnet_more]
+path = "../magnet-more"

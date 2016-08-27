@@ -1,0 +1,11 @@
+[package]
+name = "magnet_more"
+version = "0.1.0"
+authors = ["Stefano Cobianchi <stefano.cobianchi@me.com>"]
+
+[dependencies]
+regex = "*"
+liquid = "*"
+
+[dependencies.magnet_core]
+path = "../magnet-core"

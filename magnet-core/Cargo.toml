@@ -1,0 +1,8 @@
+[package]
+name = "magnet_core"
+version = "0.1.0"
+authors = ["Stefano Cobianchi <stefano.cobianchi@me.com>"]
+
+[dependencies]
+hyper = "0.9"
+typemap = "*"

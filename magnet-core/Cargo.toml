@@ -1,8 +1,11 @@
 [package]
 name = "magnet_core"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Stefano Cobianchi <stefano.cobianchi@me.com>"]
+description = "This crate contains the core types and functions for the `magnet` framework."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/stefanoc/magnet"
 
 [dependencies]
 hyper = "0.9"
-typemap = "*"
+typemap = "0.3"

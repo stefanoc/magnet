@@ -1,11 +1,12 @@
 [package]
 name = "magnet_more"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Stefano Cobianchi <stefano.cobianchi@me.com>"]
+description = "This crate contains additonal types and functions for the `magnet` framework."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/stefanoc/magnet/tree/master/magnet-more"
 
 [dependencies]
-regex = "*"
-liquid = "*"
-
-[dependencies.magnet_core]
-path = "../magnet-core"
+regex = "0.1"
+liquid = "0.8"
+magnet_core = "0.0.1"

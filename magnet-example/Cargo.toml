@@ -10,12 +10,6 @@ diesel = "*"
 diesel_codegen = "*"
 dotenv = "*"
 dotenv_macros = "*"
-
-[dependencies.magnet_core]
-path = "../magnet-core"
-
-[dependencies.magnet_more]
-path = "../magnet-more"
-
-[dependencies.magnet_app]
-path = "../magnet-app"
+magnet_core = "0.0.1"
+magnet_more = "0.0.1"
+magnet_app = "0.0.1"

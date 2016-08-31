@@ -54,3 +54,25 @@ impl Request {
         self.data.insert::<T>(value);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_request_bare_path() {
+        let r = Request::new(Method::Get, "/this/is/the/path".into());
+
+        assert_eq!("/this/is/the/path", r.path());
+        assert_eq!(None, r.query())
+    }
+
+    #[test]
+    fn test_request_with_query() {
+        let r = Request::new(Method::Get,
+                             "/this/is/the/path?and_this_is_the_query".into());
+
+        assert_eq!("/this/is/the/path", r.path());
+        assert_eq!(Some("and_this_is_the_query"), r.query());
+    }
+}

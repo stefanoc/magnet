@@ -128,3 +128,105 @@ impl hyper::server::Handler for Stack {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ::request::{Request, Method};
+    use ::response::{Response, Status};
+    use ::MagnetResult;
+    use ::Error;
+
+    struct TestBefore {
+        return_error: bool,
+    }
+
+    impl Before for TestBefore {
+        fn call(&self, _stack: &Stack, _request: &mut Request) -> MagnetResult<()> {
+            if self.return_error {
+                Err(Error::Generic("Something happened".into()))
+            } else {
+                Ok(())
+            }
+        }
+    }
+
+    struct TestAfter {
+        return_error: bool,
+    }
+
+    impl After for TestAfter {
+        fn call(&self, _stack: &Stack, _response: &mut Response) -> MagnetResult<()> {
+            if self.return_error {
+                Err(Error::Generic("Something happened".into()))
+            } else {
+                Ok(())
+            }
+        }
+    }
+
+    struct OkSomeResponder;
+
+    impl Responder for OkSomeResponder {
+        fn call(&self, _stack: &Stack, _request: &Request) -> MagnetResult<Option<Response>> {
+            Ok(Some(Response::build(Status::Ok).end()))
+        }
+    }
+
+    struct OkNoneResponder;
+
+    impl Responder for OkNoneResponder {
+        fn call(&self, _stack: &Stack, _request: &Request) -> MagnetResult<Option<Response>> {
+            Ok(None)
+        }
+    }
+
+    struct ErrorResponder;
+
+    impl Responder for ErrorResponder {
+        fn call(&self, _stack: &Stack, _request: &Request) -> MagnetResult<Option<Response>> {
+            Err(Error::Generic("Something went wrong".into()))
+        }
+    }
+
+    #[test]
+    fn test_error_in_before() {
+        let mut stack = Stack::new();
+        let mut req = Request::new(Method::Get, "/".into());
+        stack.before(TestBefore { return_error: true });
+        assert!(stack.run(&mut req).is_err());
+    }
+
+    #[test]
+    fn test_result_in_responder() {
+        let mut stack = Stack::new();
+        let mut req = Request::new(Method::Get, "/".into());
+        stack.add(OkSomeResponder);
+        assert!(stack.run(&mut req).is_ok());
+    }
+
+    #[test]
+    fn test_none_in_responder() {
+        let mut stack = Stack::new();
+        let mut req = Request::new(Method::Get, "/".into());
+        stack.add(OkNoneResponder);
+        assert!(stack.run(&mut req).is_ok());
+    }
+
+    #[test]
+    fn test_error_in_responder() {
+        let mut stack = Stack::new();
+        let mut req = Request::new(Method::Get, "/".into());
+        stack.add(ErrorResponder);
+        assert!(stack.run(&mut req).is_err());
+    }
+
+    #[test]
+    fn test_error_in_after() {
+        let mut stack = Stack::new();
+        let mut req = Request::new(Method::Get, "/".into());
+        stack.add(OkSomeResponder);
+        stack.after(TestAfter { return_error: true });
+        assert!(stack.run(&mut req).is_err());
+    }
+}

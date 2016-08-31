@@ -1,6 +1,6 @@
 use hyper;
 use typemap;
-use super::MagnetError;
+use super::Error;
 pub use hyper::method::Method;
 
 #[derive(Clone)]
@@ -19,13 +19,13 @@ impl Request {
         }
     }
 
-    pub fn build(r: hyper::server::Request) -> Result<Request, MagnetError> {
+    pub fn build(r: hyper::server::Request) -> Result<Request, Error> {
         use hyper::uri::RequestUri::*;
 
         if let AbsolutePath(path) = r.uri {
             Ok(Request::new(r.method, path))
         } else {
-            Err(MagnetError::UnsupportedRequestPathFormat)
+            Err(Error::UnsupportedRequestPathFormat)
         }
     }
 

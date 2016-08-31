@@ -7,6 +7,14 @@ use super::models::*;
 pub struct Companies;
 
 impl Controller for Companies {
+    fn before(context: &Context) -> Option<Response> {
+        if context.route.name == "companies_index" {
+            Some(respond::error(Status::Unauthorized, "GO AWAY"))
+        } else {
+            None
+        }
+    }
+
     fn index(context: Context) -> Response {
         let db = context.db().get().unwrap();
         let mut view = context.view();

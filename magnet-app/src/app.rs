@@ -18,6 +18,11 @@ pub type DieselPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 pub struct DbPool;
 
+impl ::std::fmt::Display for Application {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        write!(f, "Application[{}]", self.name)
+    }
+}
 impl ExtKey for DbPool {
     type Value = DieselPool;
 }

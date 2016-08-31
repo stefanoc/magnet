@@ -4,6 +4,7 @@ use magnet_more::params::{Param, NULL_PARAM};
 
 #[derive(Debug)]
 pub struct Route {
+    pub name: String,
     pub definition: String,
     pub pattern: Regex,
 }
@@ -20,9 +21,10 @@ impl Route {
         format!("\\A{}\\z", route_expr)
     }
 
-    pub fn new(def: &str) -> Route {
+    pub fn new(name: String, def: &str) -> Route {
         if let Ok(pattern) = Regex::new(&Route::parse(def)) {
             Route {
+                name: name,
                 definition: def.into(),
                 pattern: pattern,
             }

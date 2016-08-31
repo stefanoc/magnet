@@ -11,6 +11,7 @@ use std::marker::PhantomData;
 pub struct Context<'a> {
     pub stack: &'a Stack,
     pub request: &'a Request,
+    pub route: &'a Route,
     pub route_params: RouteParams,
     pub template_name: String,
 }
@@ -66,6 +67,10 @@ pub mod respond {
 }
 
 pub trait Controller: Sync + Send + 'static {
+    fn before(_context: &Context) -> Option<Response> {
+        None
+    }
+
     fn index(_context: Context) -> Response {
         respond::error(Status::NotImplemented, "")
     }
@@ -102,6 +107,11 @@ pub struct Dispatcher<T> {
     _controller: PhantomData<T>,
 }
 
+impl<T> ::std::fmt::Display for Dispatcher<T> {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        write!(f, "Dispatcher[{}:{}]", self.name, self.root)
+    }
+}
 impl<'a> Context<'a> {
     pub fn view(&self) -> View {
         let lib = self.stack.get::<Views>().unwrap();
@@ -134,13 +144,23 @@ impl<T> Dispatcher<T>
 {
     pub fn new(name: &'static str, root: &'static str) -> Dispatcher<T> {
         let mut map = vec![];
-        map.push(("index", Method::Get, Route::new(root)));
-        map.push(("new", Method::Get, Route::new(&format!("{}/new", root))));
-        map.push(("create", Method::Post, Route::new(root)));
-        map.push(("show", Method::Get, Route::new(&format!("{}/:id", root))));
-        map.push(("edit", Method::Get, Route::new(&format!("{}/:id/edit", root))));
-        map.push(("update", Method::Put, Route::new(&format!("{}/:id", root))));
-        map.push(("destroy", Method::Delete, Route::new(&format!("{}/:id", root))));
+        map.push(("index", Method::Get, Route::new(format!("{}_index", name), root)));
+        map.push(("new",
+                  Method::Get,
+                  Route::new(format!("{}_new", name), &format!("{}/new", root))));
+        map.push(("create", Method::Post, Route::new(format!("{}_create", name), root)));
+        map.push(("show",
+                  Method::Get,
+                  Route::new(format!("{}_show", name), &format!("{}/:id", root))));
+        map.push(("edit",
+                  Method::Get,
+                  Route::new(format!("{}_edit", name), &format!("{}/:id/edit", root))));
+        map.push(("update",
+                  Method::Put,
+                  Route::new(format!("{}_update", name), &format!("{}/:id", root))));
+        map.push(("destroy",
+                  Method::Delete,
+                  Route::new(format!("{}_destroy", name), &format!("{}/:id", root))));
 
         Dispatcher {
             name: name,

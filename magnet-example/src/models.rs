@@ -1,5 +1,4 @@
 use diesel::pg::data_types::PgDate;
-use std::collections::HashMap;
 
 #[derive(Queryable)]
 pub struct Company {

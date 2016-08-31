@@ -1,8 +1,6 @@
 use regex::Regex;
 use std::collections::HashMap;
-use magnet_core::MagnetError;
 use magnet_more::params::{Param, NULL_PARAM};
-use super::controller::Controller;
 
 #[derive(Debug)]
 pub struct Route {

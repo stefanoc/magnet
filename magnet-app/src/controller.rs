@@ -155,30 +155,37 @@ impl<T> Responder for Dispatcher<T>
     where T: Controller
 {
     fn call(&self, stack: &Stack, request: &Request) -> MagnetResult<Option<CoreResponse>> {
-        let path = request.path.split("?").nth(0).unwrap();
-        for item in &self.map {
-            if let Some(params) = item.2.matches(path) {
-                if request.method == item.1 {
-                    let context = Context {
-                        template_name: format!("{}/{}", self.name, item.0),
-                        stack: stack,
-                        request: request,
-                        route_params: params,
-                    };
-                    let response = match item.0 {
-                        "index" => T::index(context),
-                        "new" => T::new(context),
-                        "create" => T::create(context),
-                        "show" => T::show(context),
-                        "edit" => T::edit(context),
-                        "update" => T::update(context),
-                        "destroy" => T::destroy(context),
-                        _ => panic!("implement me"),
-                    };
-                    return Ok(Some(response.build()));
-                }
+        for item in self.map.iter().filter(|item| item.1 == request.method) {
+            if let Some(params) = item.2.matches(request.path()) {
+                let context = Context {
+                    template_name: format!("{}/{}", self.name, item.0),
+                    stack: stack,
+                    request: request,
+                    route: &item.2,
+                    route_params: params,
+                };
+                let response = T::before(&context)
+                    .unwrap_or(Dispatcher::<T>::invoke(item.0, context));
+                return Ok(Some(response.build()));
             }
         }
         Ok(None)
+    }
+}
+
+impl<T> Dispatcher<T>
+    where T: Controller
+{
+    fn invoke(action: &str, context: Context) -> Response {
+        match action {
+            "index" => T::index(context),
+            "new" => T::new(context),
+            "create" => T::create(context),
+            "show" => T::show(context),
+            "edit" => T::edit(context),
+            "update" => T::update(context),
+            "destroy" => T::destroy(context),
+            _ => panic!("implement me"),
+        }
     }
 }

@@ -1,7 +1,6 @@
 use liquid;
 pub use liquid::Value;
 use liquid::{Renderable, Context};
-use magnet_core::{Stack, Request};
 use magnet_core::ext::Key;
 use std::collections::HashMap;
 

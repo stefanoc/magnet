@@ -1,10 +1,7 @@
-#![allow(unused_imports)]
-
-use magnet_core::{Stack, Request, Responder, Before};
+use magnet_core::Stack;
 use magnet_core::ext::Key as ExtKey;
-use magnet_more::params::{QueryStringParser, QueryStringParams};
-use magnet_more::views::{Templates, Views, View};
-use super::routing::{Route, RouteParams};
+use magnet_more::params::QueryStringParser;
+use magnet_more::views::{Templates, Views};
 use super::controller::{Controller, Dispatcher};
 use diesel::pg::PgConnection;
 use r2d2;

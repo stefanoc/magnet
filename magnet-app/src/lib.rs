@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 extern crate hyper;
 extern crate regex;
 extern crate magnet_core;

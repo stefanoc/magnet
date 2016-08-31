@@ -53,12 +53,9 @@ impl Params {
 
 impl Before for QueryStringParser {
     fn call(&self, _stack: &Stack, request: &mut Request) -> MagnetResult<()> {
-        let params = if let Some(qs) = request.path().split("?").nth(1) {
-            Some(parse(qs))
-        } else {
-            None
-        };
-        if let Some(params) = params {
+        if let Some(params) = {
+            request.query().map(|qs| parse(qs))
+        } {
             request.set::<QueryStringParams>(params);
         }
         Ok(())

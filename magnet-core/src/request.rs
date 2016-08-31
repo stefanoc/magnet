@@ -6,15 +6,18 @@ pub use hyper::method::Method;
 #[derive(Clone)]
 pub struct Request {
     pub method: Method,
-    pub path: String,
+    path: String,
+    query: Option<String>,
     data: typemap::ShareCloneMap,
 }
 
 impl Request {
-    fn new(method: Method, path: String) -> Request {
+    pub fn new(method: Method, path: String) -> Request {
+        let mut path_parts = path.split("?");
         Request {
             method: method,
-            path: path,
+            path: path_parts.nth(0).unwrap().into(),
+            query: path_parts.nth(0).map(|q| q.into()),
             data: typemap::ShareCloneMap::custom(),
         }
     }
@@ -29,8 +32,12 @@ impl Request {
         }
     }
 
-    pub fn path(&self) -> &String {
-        &self.path
+    pub fn path(&self) -> &str {
+        self.path.as_str()
+    }
+
+    pub fn query(&self) -> Option<&str> {
+        self.query.as_ref().map(|q| q.as_str())
     }
 
     pub fn get<T>(&self) -> Option<&T::Value>
